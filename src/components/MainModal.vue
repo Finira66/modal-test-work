@@ -3,28 +3,46 @@
     <div class="overlay" @click="close">
       <div class="modal" @click.stop>
         <button class="modal__close" @click="close">x</button>
-        <div class="modal__top">
-          <slot name="header"></slot>
-        </div>
-        <form class="modal__content">
-          <slot></slot>
+        <form @submit.prevent="formSubmit">
+          <div class="modal__top">
+            <slot name="header"></slot>
+          </div>
+          <div class="modal__content">
+            <slot></slot>
+          </div>
+          <slot name="footer"></slot>
         </form>
-        <slot name="footer"></slot>
       </div>
     </div>
   </transition>
 </template>
 
 <script>
+import { ref } from "vue";
+
 export default {
   name: "MainModal",
-  setup(_, context) {
+  props: ["submit"],
+  setup(props, context) {
+    const formSubmitted = ref(false);
+
     function close() {
       context.emit("close");
     }
 
+    async function formSubmit() {
+      if (formSubmitted.value) {
+        console.log("already submitted");
+        return;
+      }
+      formSubmitted.value = true;
+      await props.submit();
+      formSubmitted.value = false;
+    }
+
     return {
       close,
+      formSubmit,
     };
   },
 };

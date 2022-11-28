@@ -1,10 +1,15 @@
 <template>
-  <button class="button">Submit</button>
+  <button class="button" :type="type ?? 'submit'">
+    <slot></slot>
+  </button>
 </template>
 
 <script>
 export default {
   name: "UiButton",
+  props: {
+    type: String,
+  },
 };
 </script>
 
